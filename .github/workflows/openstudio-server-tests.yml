@@ -101,7 +101,7 @@ jobs:
       shell: bash 
       run: ./ci/github-actions/setup.sh
       env:
-      BUILD_TYPE: docker
+        BUILD_TYPE: docker
     - name: docker-build
       shell: bash 
       run: |
