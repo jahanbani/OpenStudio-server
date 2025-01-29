@@ -101,7 +101,23 @@ jobs:
       shell: bash 
       run: ./ci/github-actions/setup.sh
       env:
-        BUILD_TYPE: docker
+      BUILD_TYPE: docker
+       - name: docker-build
+      shell: bash 
+      run: |
+          export OPENSTUDIO_TAG=3.9.0
+          echo "The current working directory is: $(pwd)"
+          docker images --all
+          docker --version
+          echo "Build Server"
+          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-server:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG --push
+          echo "docker images:"
+          docker images --all
+          echo "Build RServe"
+          cd docker/R/
+          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG --push
+          echo "docker images:"
+          docker images --all
     - name: docker
       shell: bash 
       run: |
@@ -118,14 +134,6 @@ jobs:
           #docker-compose exec -e SKIP_URBANOPT_ALGO=true -T web /usr/local/bin/run-server-tests
           #docker-compose stop
           #git checkout -- .dockerignore && git checkout -- Dockerfile
-    - name: docker-build
-      shell: bash 
-      run: |
-          export OPENSTUDIO_TAG=3.9.0
-          echo "The current working directory is: $(pwd)"
-          docker buildx build . --platform linux/amd64,linux/arm64 -t="nrel/openstudio-server:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
-          cd docker/R/
-          docker buildx build . --platform linux/amd64,linux/arm64 -t="nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
       env: 
         CI: true
         OS_SERVER_NUMBER_OF_WORKERS: 4
