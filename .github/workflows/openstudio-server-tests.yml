@@ -102,7 +102,7 @@ jobs:
       run: ./ci/github-actions/setup.sh
       env:
       BUILD_TYPE: docker
-       - name: docker-build
+    - name: docker-build
       shell: bash 
       run: |
           export OPENSTUDIO_TAG=3.9.0
@@ -118,6 +118,11 @@ jobs:
           docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG --push
           echo "docker images:"
           docker images --all
+      env: 
+        CI: true
+        OS_SERVER_NUMBER_OF_WORKERS: 4
+        BUILD_TYPE: docker
+        COMPOSE_INTERACTIVE_NO_CLI: 1
     - name: docker
       shell: bash 
       run: |
