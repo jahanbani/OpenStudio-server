@@ -110,12 +110,12 @@ jobs:
           docker images --all
           docker --version
           echo "Build Server"
-          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-server:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG --push
+          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-server:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
           echo "docker images:"
           docker images --all
           echo "Build RServe"
           cd docker/R/
-          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG --push
+          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
           echo "docker images:"
           docker images --all
       env: 
