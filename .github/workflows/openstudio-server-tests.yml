@@ -110,12 +110,12 @@ jobs:
           docker images --all
           docker --version
           echo "Build Server"
-          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-server:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
+          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-server:3.9.0-test" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG --push
           echo "docker images:"
           docker images --all
           echo "Build RServe"
           cd docker/R/
-          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
+          docker buildx build . --platform linux/amd64,linux/arm64 -t "nrel/openstudio-rserve:3.9.0-test" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG --push
           echo "docker images:"
           docker images --all
       env: 
@@ -123,6 +123,8 @@ jobs:
         OS_SERVER_NUMBER_OF_WORKERS: 4
         BUILD_TYPE: docker
         COMPOSE_INTERACTIVE_NO_CLI: 1
+        DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
     - name: docker
       shell: bash 
       run: |
