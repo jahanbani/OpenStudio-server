@@ -114,6 +114,13 @@ jobs:
           docker-compose exec -e SKIP_URBANOPT_ALGO=true -T web /usr/local/bin/run-server-tests
           docker-compose stop
           git checkout -- .dockerignore && git checkout -- Dockerfile
+    - name: docker-build
+      shell: bash 
+      run: |
+          export OPENSTUDIO_TAG=3.9.0
+          docker buildx build . --platform linux/amd64,linux/arm64 -t="nrel/openstudio-server:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
+          cd docker/R/
+          docker buildx build . --platform linux/amd64,linux/arm64 -t="nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
       env: 
         CI: true
         OS_SERVER_NUMBER_OF_WORKERS: 4
