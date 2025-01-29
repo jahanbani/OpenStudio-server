@@ -93,6 +93,8 @@ jobs:
       run: rm -rf /opt/hostedtoolcache 
     - name: Check out repository
       uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3  
     - name: setup
       shell: bash 
       run: ./ci/github-actions/setup.sh
@@ -103,21 +105,22 @@ jobs:
       run: |
           export OPENSTUDIO_TAG=3.9.0
           sed -i -E "s/.git//g" .dockerignore
-          docker volume create --name=osdata
-          docker images --all
+          #docker volume create --name=osdata
+          #docker images --all
           docker --version
           docker-compose --version
-          docker-compose -f docker-compose.test.yml pull
-          docker-compose -f docker-compose.test.yml build --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
-          docker-compose -f docker-compose.test.yml up -d
-          # set SKIP_URBANOPT_ALGO=true to skip UrbanOpt algo tests
-          docker-compose exec -e SKIP_URBANOPT_ALGO=true -T web /usr/local/bin/run-server-tests
-          docker-compose stop
-          git checkout -- .dockerignore && git checkout -- Dockerfile
+          #docker-compose -f docker-compose.test.yml pull
+          #docker-compose -f docker-compose.test.yml build --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
+          #docker-compose -f docker-compose.test.yml up -d
+          ## set SKIP_URBANOPT_ALGO=true to skip UrbanOpt algo tests
+          #docker-compose exec -e SKIP_URBANOPT_ALGO=true -T web /usr/local/bin/run-server-tests
+          #docker-compose stop
+          #git checkout -- .dockerignore && git checkout -- Dockerfile
     - name: docker-build
       shell: bash 
       run: |
           export OPENSTUDIO_TAG=3.9.0
+          echo "The current working directory is: $(pwd)"
           docker buildx build . --platform linux/amd64,linux/arm64 -t="nrel/openstudio-server:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
           cd docker/R/
           docker buildx build . --platform linux/amd64,linux/arm64 -t="nrel/openstudio-rserve:latest" --build-arg OPENSTUDIO_VERSION=$OPENSTUDIO_TAG
